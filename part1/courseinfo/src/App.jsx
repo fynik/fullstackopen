@@ -1,6 +1,4 @@
-const Header = (props) => {
-  return <h1>{props.course}</h1>
-}
+const Header = ({ course }) => <h1>{course}</h1>
 
 const Total = (props) => {
   const total = props.parts.reduce((prev, next) => prev + next.exercises, 0);
