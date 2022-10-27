@@ -8,7 +8,7 @@ const MostVoted = ({ votes, anecdotes }) => {
 
   return (
     <>
-      <h1>Anecdote with most votes</h1>
+      <h3>Anecdote with most votes</h3>
       <p>{anecdotes[idx]}</p>
     </>
   )  
@@ -38,7 +38,7 @@ const App = () => {
   return (
     <>
       <div>
-        <h1>Anecdote of the day</h1>
+        <h3>Anecdote of the day</h3>
         <p>{anecdotes[selected]}</p>
         <p>has {votes[selected]} votes</p>
       </div>
