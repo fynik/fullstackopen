@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import PersonsList from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import FilterForm from "./components/FilterForm";
+import Notification from "./components/Notification";
 import phonebookService from "./services/phonebook";
 
 const App = () => {
-  const [persons, setPersons] = useState([]) ;
-
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [message, setMessage] = useState({content: null, success: true});
 
   useEffect(() => {
     phonebookService
@@ -36,6 +37,12 @@ const App = () => {
           .updatePerson(personId, updatedPerson)
           .then(returnedPerson => 
             setPersons(persons.map(p => p.id !== personId ? p : returnedPerson)));
+        
+        setMessage({
+          content: `Number for ${updatedPerson.name} updated`,
+          success: true
+        });
+        setTimeout(() => setMessage({content: null, success: true}), 2000);
       }
     } else {
       const newPerson = {
@@ -50,6 +57,12 @@ const App = () => {
           setNewName('');
           setNewNumber('');
         });
+
+        setMessage({
+          content: `${newPerson.name} added to phonebook`,
+          success: true
+        });
+        setTimeout(() => setMessage({content: null, success: true}), 2000);
     }
   }
 
@@ -71,6 +84,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <FilterForm filter={filter} filterHandler={filterHandler}/>
       <h3>add a new</h3>
       <PersonForm newName={newName} newNumber={newNumber} addPerson={addPerson}
