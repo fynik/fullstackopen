@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PersonsList from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import FilterForm from "./components/FilterForm";
-import axios from "axios";
+import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]) ;
@@ -12,9 +12,9 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(resp => setPersons(resp.data));
+    phonebookService
+      .getAll()
+      .then(persons => setPersons(persons));
   }, []);
 
   const nameInputHandler = (event) => setNewName(event.target.value);
@@ -27,17 +27,40 @@ const App = () => {
     const personExist = persons.filter(person => person.name === newName).length !== 0;
 
     if (personExist) {
-      alert(`${newName} is already added to phonebook`)
+      const person = persons.find(p => p.name === newName);
+      const personId = person.id;
+      if (window.confirm(`${person.name} already in phonebook. Replace the old number with a new one?`)) {
+        const updatedPerson = { ...person, number: newNumber};
+
+        phonebookService
+          .updatePerson(personId, updatedPerson)
+          .then(returnedPerson => 
+            setPersons(persons.map(p => p.id !== personId ? p : returnedPerson)));
+      }
     } else {
       const newPerson = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
       };
       
-      setPersons(persons.concat(newPerson));
-      setNewName('');
-      setNewNumber('');
+      phonebookService
+        .createPerson(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+        });
+    }
+  }
+
+  const deletePerson = id => {
+    const person = persons.find(p => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phonebookService
+        .deletePerson(id)
+        .then(() => setPersons(
+          persons.filter(p => p.id !== id)
+        ));
     }
   }
 
@@ -54,7 +77,7 @@ const App = () => {
                   nameInputHandler={nameInputHandler} numberInputHandler={numberInputHandler} />
       <br />
       <h3>Numbers</h3>
-      <PersonsList persons={filteredPersons} />
+      <PersonsList persons={filteredPersons} deleteHandler={deletePerson}/>
     </>
   )
 }
