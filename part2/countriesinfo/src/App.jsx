@@ -10,6 +10,7 @@ const App = () => {
 
   useEffect(() => {
     axios
+    // .get("http://localhost:3001/all")
       .get("https://restcountries.com/v3.1/all")
       .then(resp => {
         console.log("resolved");
@@ -19,6 +20,7 @@ const App = () => {
 
 
   const filterHandler = (event) => setFilter(event.target.value);
+  const showCountry = (country) => setFilter(country);
 
   const filteredCountries = filter === ''
     ? countries
@@ -27,7 +29,7 @@ const App = () => {
   return (
     <>
       <Filter filter={filter} filterhandler={filterHandler} />
-      <CountriesList countries={filteredCountries} />
+      <CountriesList countries={filteredCountries} showCountry={showCountry}/>
     </>
   );
 }
