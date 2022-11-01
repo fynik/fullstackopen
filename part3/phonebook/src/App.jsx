@@ -56,13 +56,20 @@ const App = () => {
           setPersons(persons.concat(returnedPerson));
           setNewName('');
           setNewNumber('');
-        });
+          setMessage({
+            content: `${newPerson.name} added to phonebook`,
+            success: true
+          });
+          setTimeout(() => setMessage({content: null, success: true}), 2000);
+        })
+        .catch(error => {
+          setMessage({
+            content: "Can't add person",
+            success: false
+          });
+          setTimeout(() => setMessage({content: null, success: true}), 2000);
+        })
 
-        setMessage({
-          content: `${newPerson.name} added to phonebook`,
-          success: true
-        });
-        setTimeout(() => setMessage({content: null, success: true}), 2000);
     }
   }
 
